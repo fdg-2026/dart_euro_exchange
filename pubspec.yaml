@@ -1,0 +1,8 @@
+name: flutter_async_callbacks
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+dependencies:
+  http: ^1.6.0
+
