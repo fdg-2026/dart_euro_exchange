@@ -9,9 +9,7 @@ void main() async {
 
 Future<void> fetchExchangeRate() async {
   // We use Frankfurter API: no key needed for basic EUR -> USD
-  final url = Uri.parse(
-    'https://api.frankfurter.dev/v1/latest?base=EUR&symbols=USD',
-  );
+  final url = Uri.parse('https://api.frankfurter.dev/v2/rates?quotes=USD,GBP');
 
   try {
     print('Fetching current exchange rate...');
@@ -20,15 +18,23 @@ Future<void> fetchExchangeRate() async {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
+      double usdRate = 0;
+      String usdDate = "";
+
       // The API returns a Map: { "base": "EUR", "date": "...", "rates": { "USD": 1.08 } }
-      double usdRate = data['rates']['USD'];
-      String date = data['date'];
+      for (final item in data) {
+        switch (item['quote']) {
+          case 'USD':
+            usdRate = item['rate'];
+            usdDate = item['date'];
+        }
+      }
 
       print('-------------------------------');
       print('Base Currency: EUR');
       print('Target Currency: USD');
       print('Current Rate: \$${usdRate.toStringAsFixed(4)}');
-      print('Last Updated: $date');
+      print('Last Updated: $usdDate');
       print('-------------------------------');
     } else {
       print('Failed to load data. Status code: ${response.statusCode}');
